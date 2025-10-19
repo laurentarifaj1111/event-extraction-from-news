@@ -34,3 +34,20 @@ class CollectData:
     def connect_to_database(self, dbname, user, password, host, port):
         conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
         return conn
+
+    def clear_file_content(self, filepath):
+        # Overwrite with empty content
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write('')
+
+    def read_file_text(self, filepath):
+        with open(filepath, 'r', encoding='utf-8') as f:
+            return f.read()
+
+    def append_phrase_to_file(self, filepath, existing_content, new_content):
+        updated_content = existing_content + '\n' + new_content
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(updated_content)
+
+    def read_file_into_list(self, file_content):
+        return [line.strip() for line in file_content.split('\n')]
