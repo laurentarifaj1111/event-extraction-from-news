@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 import psycopg2
+import requests
 from langdetect import detect
 from psycopg2 import sql
 
@@ -51,3 +52,40 @@ class CollectData:
 
     def read_file_into_list(self, file_content):
         return [line.strip() for line in file_content.split('\n')]
+
+    def fetch_news(self, query, page, api_key):
+        url = "https://newsapi.org/v2/everything"
+        params = {
+            'q': query,
+            'page': page,
+            'apiKey': api_key,
+            'from': previous_date,
+            'to': today_date,
+            'language': 'en'
+        }
+        response = requests.get(url, params=params)
+        return response.json()
+
+    def get_article_data(self, json_data, q):
+        source_id = json_data["source"]["id"]
+        source_name = json_data["source"]["name"]
+        title = json_data['title']
+        author = json_data['author']
+        description = json_data['description']
+        url = json_data['url']
+        urlToImage = json_data['urlToImage']
+        publishedAt = json_data['publishedAt']
+        content = json_data['content']
+        result = {
+            "source_id": source_id,
+            "source_name": source_name,
+            "title": title,
+            "author": author,
+            "description": description,
+            "content": content,
+            "url": url,
+            "urlToImage": urlToImage,
+            "publishedAt": publishedAt,
+            "category": q
+        }
+        return result
