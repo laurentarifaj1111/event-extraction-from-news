@@ -89,3 +89,20 @@ class CollectData:
             "category": q
         }
         return result
+
+    def push_data(self, data, conn):
+        insert_query = sql.SQL("""
+                               INSERT INTO {}
+                               (source_id, source_name, author, title, description, url, url_to_image, published_at,
+                                content, category)
+                               VALUES
+                                   (%(source_id)s, %(source_name)s, %(author)s, %(title)s, %(description)s, %(url)s, %(urlToImage)s, %(publishedAt)s, %(content)s, %(category)s)
+                               """).format(sql.Identifier(table_name))
+
+        with conn.cursor() as cur:
+            cur.execute(insert_query, data)
+        conn.commit()
+
+    def append_word_to_file(self, word, filename="customoutput.log"):
+        with open(filename, 'a', encoding='utf-8') as file:
+            file.write(str(word) + '\n')
