@@ -150,3 +150,29 @@ class CollectData:
         # Clear completed list file
         phaseq_path = os.path.join(data_directory, phaseq)
         self.clear_file_content(phaseq_path)
+
+
+class DumpSqlData:
+    def __init__(self):
+        pass
+
+    def export_to_csv(self, csv_file_path=article_file):
+        try:
+            conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+            cur = conn.cursor()
+            select_query = sql.SQL("SELECT * FROM {}").format(sql.Identifier(table_name))
+            cur.execute(select_query)
+            rows = cur.fetchall()
+            col_names = [desc[0] for desc in cur.description]
+
+            out_path = os.path.join(data_directory, f"{csv_file_path}.csv")
+            with open(out_path, 'w', newline='', encoding='utf-8') as csvfile:
+                csv_writer = csv.writer(csvfile)
+                csv_writer.writerow(col_names)
+                csv_writer.writerows(rows)
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        finally:
+            cur.close()
+            conn.close()
