@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 
 import psycopg2
@@ -106,3 +107,46 @@ class CollectData:
     def append_word_to_file(self, word, filename="customoutput.log"):
         with open(filename, 'a', encoding='utf-8') as file:
             file.write(str(word) + '\n')
+
+    def runner(self):
+        api = 0
+        conn = self.connect_to_database(dbname, user, password, host, port)
+
+        # Read newsq file from local
+        newsq_path = os.path.join(data_directory, newsq)
+        news_file_content = self.read_file_text(newsq_path)
+        for line in news_file_content.split('\n'):
+            q = line.strip()
+            phaseq_path = os.path.join(data_directory, phaseq)
+            existing_phrase_list = []
+            if os.path.exists(phaseq_path):
+                existing_phrase_list = self.read_file_into_list(self.read_file_text(phaseq_path))
+            if q not in existing_phrase_list:
+                try:
+                    news_raw = self.fetch_news(query=q, page=1, api_key=api_list[api])
+                except IndexError:
+                    break
+
+                if news_raw.get("status") != "error":
+                    upper_range = min(int(news_raw["totalResults"] / 100), 5)
+                    for i in range(1, upper_range + 1):
+                        if i != 1:
+                            news_raw = self.fetch_news(query=q, page=i, api_key=api_list[api])
+                        if news_raw.get("status") != "error":
+                            articles = news_raw.get("articles", [])
+                            for article in articles:
+                                exarticle = self.get_article_data(article, q)
+                                self.push_data(exarticle, conn)
+                            # append q to completed list
+                            self.append_phrase_to_file(phaseq_path,
+                                                       "\n".join(existing_phrase_list),
+                                                       q)
+                            self.append_word_to_file(f"{q} Completed")
+                        else:
+                            if news_raw.get("code") == "rateLimited":
+                                api = (api + 1) % len(api_list)
+                # end if status ok
+        conn.close()
+        # Clear completed list file
+        phaseq_path = os.path.join(data_directory, phaseq)
+        self.clear_file_content(phaseq_path)
