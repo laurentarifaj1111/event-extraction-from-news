@@ -176,3 +176,12 @@ class DumpSqlData:
         finally:
             cur.close()
             conn.close()
+
+    def CurrentData(self, csv_file_path=article_file):
+        target_date_str = str(previous_date)
+        input_path = os.path.join(data_directory, f"{csv_file_path}.csv")
+        data = pd.read_csv(input_path)
+        mask = pd.notna(data['published_at'])
+        filtered_df = data[mask & data['published_at'].str.startswith(target_date_str)]
+        out_path = os.path.join(data_directory, f"{unwanted_file}.csv")
+        filtered_df.to_csv(out_path, index=False)
