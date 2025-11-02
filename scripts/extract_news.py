@@ -29,6 +29,7 @@ previous_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
 
 api_list = ['2e9ca2e68438477cb89a2a15745e6a35']
 
+
 class CollectData:
     def __init__(self):
         pass
@@ -185,3 +186,29 @@ class DumpSqlData:
         filtered_df = data[mask & data['published_at'].str.startswith(target_date_str)]
         out_path = os.path.join(data_directory, f"{unwanted_file}.csv")
         filtered_df.to_csv(out_path, index=False)
+
+
+class Preprocessing:
+    def __init__(self):
+        pass
+
+    def filter_english(self, text):
+        try:
+            lang = detect(text)
+            if lang == 'en':
+                return text
+            else:
+                return None
+        except:
+            return None
+
+    def remove_unwanted_row(self):
+        input_path = os.path.join(data_directory, f"{unwanted_file}.csv")
+        data = pd.read_csv(input_path)
+        data = data.dropna(subset=['url'])
+        data = data.drop_duplicates(subset=['url'], keep='first')
+        data["processed_content"] = data["content"].apply(self.filter_english)
+        data = data.dropna(subset=['processed_content'])
+        data = data.drop(columns=['processed_content'])
+        out_path = os.path.join(data_directory, f"{unwanted_file}.csv")
+        data.to_csv(out_path, index=False)
