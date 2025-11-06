@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
 
+import pandas as pd
 import psycopg2
 import requests
 from langdetect import detect
@@ -212,3 +213,15 @@ class Preprocessing:
         data = data.drop(columns=['processed_content'])
         out_path = os.path.join(data_directory, f"{unwanted_file}.csv")
         data.to_csv(out_path, index=False)
+
+    def after_prepprocessing(self):
+        input_path = os.path.join(data_directory, f"{previous_date}.csv")
+        data = pd.read_csv(input_path)
+        data = data.dropna(subset=['author', 'url', 'title', 'full_content'])
+        out_path = os.path.join(data_directory, f"{previous_date}.csv")
+        data.to_csv(out_path, index=False)
+
+    def read_csv(self):
+        input_path = os.path.join(data_directory, f"{unwanted_file}.csv")
+        data = pd.read_csv(input_path)
+        return data
