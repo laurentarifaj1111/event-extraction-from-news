@@ -4,8 +4,10 @@ from datetime import datetime, timedelta
 import pandas as pd
 import psycopg2
 import requests
+from bs4 import BeautifulSoup
 from langdetect import detect
 from psycopg2 import sql
+import json
 
 cnt = 0
 t = 100
@@ -225,3 +227,18 @@ class Preprocessing:
         input_path = os.path.join(data_directory, f"{unwanted_file}.csv")
         data = pd.read_csv(input_path)
         return data
+
+    def get_BusinessInsider(self, url):
+        try:
+            response = requests.get(url)
+            content = response.text
+            soup = BeautifulSoup(content, 'html.parser')
+            script_tag = soup.find('script', {'id': '__NEXT_DATA__', 'type': 'application/json'})
+            json_data = json.loads(script_tag.string)
+            body = json_data['props']['pageProps']['articleShowData']['body']
+            soup2 = BeautifulSoup(body, 'html.parser')
+            paragraphs = soup2.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+            return text_content
+        except:
+            return "None"
