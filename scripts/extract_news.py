@@ -1,3 +1,4 @@
+import csv
 import os
 from datetime import datetime, timedelta
 
@@ -241,4 +242,102 @@ class Preprocessing:
             text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
             return text_content
         except:
+            return "None"
+
+    def preprocess(self, source_name, url):
+
+        global cnt, t
+        cnt += 1
+        if cnt > t:
+            self.append_word_to_file(cnt)
+            t += 100
+
+        if source_name == "Business Insider":
+            return self.get_BuinessInsider(url)
+
+        if source_name == "Forbes":
+            return self.get_Forbes(url)
+
+        if source_name == "Android Central":
+            return self.get_Android_Central(url)
+
+        if source_name == "Gizmodo.com":
+            return self.get_Gizmodo_com(url)
+
+        if source_name == "BBC News":
+            return self.get_bbc_news(url)
+
+        if source_name == "Al Jazeera English":
+            return self.get_al_jazeera_english(url)
+
+        if source_name == "AllAfrica - Top Africa News":
+            return self.get_allafrica(url)
+
+        if source_name == "ABC News":
+            return self.get_abc_news(url)
+
+        if source_name == "Globalsecurity.org":
+            return self.get_Globalsecurity_org(url)
+
+        if source_name == "RT":
+            return self.get_rt(url)
+
+        if source_name == "Marketscreener.com":
+            return self.get_market_screener(url)
+
+        if source_name == "Phys.Org":
+            return self.get_phys_org(url)
+
+        if source_name == "Time":
+            return self.get_time_news(url)
+
+        if source_name == "NPR":
+            return self.get_npr(url)
+
+        if source_name == "Boing Boing":
+            return self.get_boing_boing(url)
+
+        if source_name == "CNA":
+            return self.get_cna(url)
+
+        if source_name == "The Punch":
+            return self.get_punch(url)
+
+        if source_name == "Euronews":
+            return self.get_euronews(url)
+
+        if source_name == "Deadline":
+            return self.get_dedline_news(url)
+
+        if source_name == "ReadWrite":
+            return self.get_readwrite(url)
+
+        if source_name == "International Business Times":
+            return self.get_international_buiness_times(url)
+
+        if source_name == "CNN":
+            return self.get_cnn(url)
+
+        if source_name == "The Verge":
+            return self.get_The_Verge(url)
+
+        if source_name == "The Indian Express":
+            return self.get_indian_express(url)
+
+        if source_name == "Wired":
+            return self.get_wired(url)
+
+        if source_name == "GlobeNewswire":
+            return self.get_global_news_wire(url)
+
+        if source_name == "ETF Daily News":
+            return self.get_etf_daily_news(url)
+
+        if source_name == "The Times of India":
+            return self.get_times_of_india(url)
+
+        if source_name == "Digital Trends":
+            return self.get_digital_content(url)
+
+        else:
             return "None"
