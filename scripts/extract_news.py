@@ -1,5 +1,6 @@
 import csv
 import os
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -355,3 +356,23 @@ class Preprocessing:
 
         out_path = os.path.join(data_directory, f"{previous_date}.csv")
         data.to_csv(out_path, index=False)
+
+    def get_BuinessInsider(self, url):
+        try:
+            response = requests.get(url)
+            content = response.text
+
+            soup = BeautifulSoup(content, 'html.parser')
+
+            script_tag = soup.find('script', {'id': '__NEXT_DATA__', 'type': 'application/json'})
+            json_data = json.loads(script_tag.string)
+            body = json_data['props']['pageProps']['articleShowData']['body']
+
+            soup = BeautifulSoup(body, 'html.parser')
+            paragraphs = soup.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+
+            return text_content
+
+        except:
+            return "None"
