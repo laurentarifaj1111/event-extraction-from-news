@@ -341,3 +341,17 @@ class Preprocessing:
 
         else:
             return "None"
+
+    def runner(self):
+        data = self.read_csv()
+        data["source_name"].dropna(inplace=True)
+        data["url"].dropna(inplace=True)
+
+        def process_row(row):
+            return self.preprocess(row.source_name, row.url)
+
+        with ThreadPoolExecutor() as executor:
+            data['full_content'] = list(executor.map(process_row, data.itertuples(index=False)))
+
+        out_path = os.path.join(data_directory, f"{previous_date}.csv")
+        data.to_csv(out_path, index=False)
