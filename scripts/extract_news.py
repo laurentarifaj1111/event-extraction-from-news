@@ -392,3 +392,19 @@ class Preprocessing:
 
         except:
             return "None"
+
+        def get_Android_Central(self, url):
+            try:
+                response = requests.get(url)
+                content = response.text
+
+                soup = BeautifulSoup(content, 'html.parser')
+                target_element = soup.find('div', id='article-body')
+
+                child_tags = target_element.find_all(['h2', 'p'])
+                combined_text = ' '.join([tag.text for tag in child_tags])
+
+                return combined_text
+
+            except:
+                return "None"
