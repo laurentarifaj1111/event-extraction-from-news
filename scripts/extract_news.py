@@ -446,3 +446,16 @@ class Preprocessing:
             return joinnews
         except:
             return "None"
+
+    def get_al_jazeera_english(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+
+            paragraphs = soup.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+
+            return text_content
+
+        except:
+            return "None"
