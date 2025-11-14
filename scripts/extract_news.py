@@ -424,3 +424,25 @@ class Preprocessing:
 
         except:
             return "None"
+
+    def get_bbc_news(self, url):
+        try:
+            news = []
+            headersList = {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+            }
+
+            payload = ""
+
+            news_response = requests.request("GET", url, data=payload, headers=headersList)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            soup.findAll("p", {"class": "ssrcss-1q0x1qg-Paragraph eq5iqo00"})
+            soup.findAll("div", {"data-component": "text-block"})
+            for para in soup.findAll("div", {"data-component": "text-block"}):
+                news.append(para.find("p").getText())
+            joinnews = " ".join(news)
+
+            return joinnews
+        except:
+            return "None"
