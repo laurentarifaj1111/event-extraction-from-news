@@ -459,3 +459,17 @@ class Preprocessing:
 
         except:
             return "None"
+
+    def get_allafrica(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            target_element = soup.find('div', class_="story-body")
+            paragraphs = target_element.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+
+            return text_content
+
+        except:
+            return "None"
+
