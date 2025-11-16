@@ -1,0 +1,29 @@
+# Core NLP + Transformers
+transformers==4.40.0
+torch>=2.0.0
+sentencepiece
+datasets
+nltk~=3.9.2
+pandas~=2.3.3
+numpy
+scikit-learn~=1.7.2
+
+# Extractive Summarizer
+bert-extractive-summarizer
+
+# Evaluation
+rouge-score
+bert-score~=0.3.13
+
+# Progress bars / utilities
+tqdm
+
+# Visualization (for notebooks)
+matplotlib
+seaborn
+
+# Misc
+regex
+
+rouge_score~=0.1.2
+requests~=2.32.5
