@@ -473,3 +473,15 @@ class Preprocessing:
         except:
             return "None"
 
+    def get_abc_news(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('div', {'data-testid': 'prism-article-body'})
+            paragraphs = content_div.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+
+            return text_content
+
+        except:
+            return "None"
