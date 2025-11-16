@@ -19,11 +19,15 @@ bert-score~=0.3.13
 tqdm
 
 # Visualization (for notebooks)
-matplotlib
-seaborn
+matplotlib~=3.10.7
+seaborn~=0.13.2
 
 # Misc
 regex
 
 rouge_score~=0.1.2
 requests~=2.32.5
+rouge_score~=0.1.2
+beautifulsoup4~=4.14.2
+sns~=0.1
+wordcloud~=1.9.4
