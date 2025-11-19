@@ -1,5 +1,6 @@
 import csv
 import os
+import re
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 
@@ -510,4 +511,54 @@ class Preprocessing:
             return text_content
 
         except:
+            return "None"
+
+    def get_market_screener(self, url):
+        try:
+            news = []
+            headersList = {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+            }
+
+            payload = ""
+
+            news_response = requests.request("GET", url, data=payload, headers=headersList)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('div', class_="txt-s4 article-text article-text--clear")
+            paragraphs = content_div.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+
+            return text_content
+
+        except:
+            headersList = {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+            }
+
+            payload = ""
+
+            news_response = requests.request("GET", url, data=payload, headers=headersList)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            meta_tag = soup.find('meta', {'http-equiv': 'refresh'})
+            pattern = re.compile(r'content="0;url=\'(.*?)\'" http-equiv="refresh"')
+            match = pattern.search(str(meta_tag)).group(1)
+            web_url = "https://www.marketscreener.com{}".format(match)
+            headersList = {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+            }
+
+            payload = ""
+
+            news_response = requests.request("GET", web_url, data=payload, headers=headersList)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('div', class_="txt-s4 article-text article-text--clear ")
+            paragraphs = content_div.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+
+            return text_content
+
+        finally:
             return "None"
