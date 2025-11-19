@@ -562,3 +562,26 @@ class Preprocessing:
 
         finally:
             return "None"
+        
+    def get_phys_org(self, url):
+        try:
+            news = []
+            headersList = {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+            }
+
+            payload = ""
+
+            news_response = requests.request("GET", url, data=payload, headers=headersList)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('div', class_="mt-4 article-main")
+            paragraphs = content_div.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+            splited = text_content.split("More information:")
+            text_content = splited[0]
+
+            return text_content
+
+        except:
+            return "None"
