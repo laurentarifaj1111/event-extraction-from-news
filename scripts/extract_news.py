@@ -648,3 +648,15 @@ class Preprocessing:
 
         except:
             return "None"
+
+
+    def get_euronews(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            script_tag = soup.find('script', {'type': 'application/ld+json'})
+            json_data = json.loads(script_tag.string)["@graph"][0]["articleBody"]
+            return json_data
+
+        except:
+            return "None"
