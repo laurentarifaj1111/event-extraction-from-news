@@ -636,3 +636,15 @@ class Preprocessing:
 
         except:
             return "None"
+
+    def get_punch(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('div', class_="post-content")
+            paragraphs = content_div.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+            return text_content
+
+        except:
+            return "None"
