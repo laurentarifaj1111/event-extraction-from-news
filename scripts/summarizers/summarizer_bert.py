@@ -5,8 +5,9 @@ import nltk
 
 nltk.download("punkt", quiet=True)
 from nltk.tokenize import sent_tokenize
+from scripts.utils import get_device
 
-DEVICE = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+DEVICE = get_device()
 
 
 class BertExtractiveSummarizer:
@@ -23,6 +24,7 @@ class BertExtractiveSummarizer:
             model_name,
             output_hidden_states=True
         ).to(DEVICE)
+        self.bert_model.eval()  # Set to evaluation mode for inference
 
         # Inject custom GPU-enabled model into Summarizer
         self.model = Summarizer(

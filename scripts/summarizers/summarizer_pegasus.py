@@ -1,8 +1,8 @@
 from transformers import PegasusTokenizer, PegasusForConditionalGeneration
-from scripts.utils import chunk_text
+from scripts.utils import chunk_text, get_device
 import torch
 
-DEVICE = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+DEVICE = get_device()
 
 class PegasusSummarizer:
     """
@@ -12,6 +12,7 @@ class PegasusSummarizer:
     def __init__(self, model_name="google/pegasus-xsum", max_len=256):
         self.tokenizer = PegasusTokenizer.from_pretrained(model_name)
         self.model = PegasusForConditionalGeneration.from_pretrained(model_name).to(DEVICE)
+        self.model.eval()  # Set to evaluation mode for inference
         self.max_len = max_len
 
     def summarize(self, text: str) -> str:

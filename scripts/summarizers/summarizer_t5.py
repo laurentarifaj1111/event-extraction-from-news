@@ -1,13 +1,8 @@
 import torch
 from transformers import T5Tokenizer, T5ForConditionalGeneration
+from scripts.utils import chunk_text, get_device
 
-from scripts.utils import chunk_text
-
-
-import torch
-from transformers import T5Tokenizer, T5ForConditionalGeneration
-
-DEVICE = torch.device("mps") if torch.backends.mps.is_available() else torch.device("cpu")
+DEVICE = get_device()
 
 class T5Summarizer:
     """
@@ -17,6 +12,7 @@ class T5Summarizer:
     def __init__(self, model_name="google/flan-t5-base", max_len=256):
         self.tokenizer = T5Tokenizer.from_pretrained(model_name)
         self.model = T5ForConditionalGeneration.from_pretrained(model_name).to(DEVICE)
+        self.model.eval()  # Set to evaluation mode for inference
         self.max_len = max_len
 
     def summarize(self, text: str) -> str:
