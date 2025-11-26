@@ -673,3 +673,15 @@ class Preprocessing:
 
         except:
             return "None"
+
+    def get_readwrite(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('div', class_="entry-content col-md-10")
+            paragraphs = content_div.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs[:-1]])
+            return text_content
+
+        except:
+            return "None"
