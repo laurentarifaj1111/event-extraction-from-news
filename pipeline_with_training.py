@@ -24,7 +24,6 @@ from scripts.summarizers.summarizer_t5 import T5Summarizer
 from scripts.evaluation import ModelEvaluator
 from scripts.utils import print_device_info
 
-
 def run_pipeline(limit: int = 50, use_finetuned: bool = True):
     print("\n=============================================")
     print("   NLP PIPELINE: WITH FINE-TUNED MODELS")
@@ -126,16 +125,16 @@ def run_pipeline(limit: int = 50, use_finetuned: bool = True):
         # bert_summary, bert_time = evaluator.measure_inference_time(
         #     bert_summ.summarize, text
         # )
-        peg_summary, peg_time = evaluator.measure_inference_time(
-            pegasus_summ.summarize, text
-        )
+        # peg_summary, peg_time = evaluator.measure_inference_time(
+        #     pegasus_summ.summarize, text
+        # )
         t5_summary, t5_time = evaluator.measure_inference_time(
             t5_summ.summarize, text
         )
 
         # Evaluation (ROUGE + BERTScore)
         # bert_scores = evaluator.evaluate_single(text, bert_summary)
-        peg_scores = evaluator.evaluate_single(text, peg_summary)
+        # peg_scores = evaluator.evaluate_single(text, peg_summary)
         t5_scores = evaluator.evaluate_single(text, t5_summary)
 
         # Structured record
@@ -145,17 +144,17 @@ def run_pipeline(limit: int = 50, use_finetuned: bool = True):
             "event_extraction": event_info,
             "summaries": {
                 # "bert": bert_summary,
-                "pegasus": peg_summary,
+                # "pegasus": peg_summary,
                 "t5": t5_summary
             },
             "metrics": {
                 # "bert": {**bert_scores, "time_ms": bert_time},
-                "pegasus": {**peg_scores, "time_ms": peg_time},
+                # "pegasus": {**peg_scores, "time_ms": peg_time},
                 "t5": {**t5_scores, "time_ms": t5_time}
             },
             "model_info": {
                 # "bert_finetuned": bert_finetuned if use_finetuned else False,
-                "pegasus_finetuned": pegasus_finetuned if use_finetuned else False,
+                # "pegasus_finetuned": pegasus_finetuned if use_finetuned else False,
                 "t5_finetuned": t5_finetuned if use_finetuned else False
             }
         }

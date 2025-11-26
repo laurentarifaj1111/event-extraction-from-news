@@ -3,6 +3,14 @@ Fine-tuning script for summarization models.
 Trains Pegasus and T5 on train.csv data.
 """
 import os
+import sys
+from pathlib import Path
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
@@ -14,6 +22,8 @@ from transformers import (
 from scripts.utils import get_device, print_device_info
 
 DEVICE = get_device()
+# MPS doesn't support multiprocessing data loading or pin_memory
+USE_MPS = DEVICE.type == "mps"
 
 
 class SummarizationDataset(Dataset):
@@ -99,8 +109,8 @@ def train_pegasus(train_df, val_df, output_dir='models/pegasus-finetuned'):
         load_best_model_at_end=True,
         push_to_hub=False,
         fp16=False,  # Set to True if using CUDA
-        dataloader_num_workers=4,  # Parallel data loading to reduce CPU bottleneck
-        dataloader_pin_memory=True,  # Faster CPU->GPU transfer
+        dataloader_num_workers=0 if USE_MPS else 4,  # MPS doesn't support multiprocessing
+        dataloader_pin_memory=False if USE_MPS else True,  # MPS doesn't support pin_memory
     )
     
     # Trainer
@@ -163,8 +173,8 @@ def train_t5(train_df, val_df, output_dir='models/t5-finetuned'):
         load_best_model_at_end=True,
         push_to_hub=False,
         fp16=False,  # Set to True if using CUDA
-        dataloader_num_workers=4,  # Parallel data loading to reduce CPU bottleneck
-        dataloader_pin_memory=True,  # Faster CPU->GPU transfer
+        dataloader_num_workers=0 if USE_MPS else 4,  # MPS doesn't support multiprocessing
+        dataloader_pin_memory=False if USE_MPS else True,  # MPS doesn't support pin_memory
     )
     
     # Trainer
@@ -195,8 +205,10 @@ def main():
     
     # Load data
     print("Loading training data...")
-    train_df = pd.read_csv("../data/processed/train.csv")
-    val_df = pd.read_csv("../data/processed/val.csv")
+    # Use absolute path from project root
+    data_dir = project_root / "data" / "processed"
+    train_df = pd.read_csv(data_dir / "train.csv")
+    val_df = pd.read_csv(data_dir / "val.csv")
     
     # Filter out rows with missing summaries
     train_df = train_df.dropna(subset=['Summary', 'clean_text'])
@@ -206,7 +218,8 @@ def main():
     print(f"Validation samples: {len(val_df)}")
     
     # Create output directories
-    os.makedirs("models", exist_ok=True)
+    models_dir = project_root / "models"
+    os.makedirs(models_dir, exist_ok=True)
     
     # Fine-tune models
     print("\n" + "="*50)
