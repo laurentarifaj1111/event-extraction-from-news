@@ -716,3 +716,16 @@ class Preprocessing:
 
         except:
             return "None"
+
+    def get_The_Verge(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+
+            target_element = soup.find('div',
+                                       class_='duet--article--article-body-component-container clearfix sm:ml-auto md:ml-100 md:max-w-article-body lg:mx-100')
+            text_content = target_element.get_text(separator=' ', strip=True)
+
+            return text_content
+        except:
+            return "None"
