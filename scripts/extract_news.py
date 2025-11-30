@@ -685,3 +685,22 @@ class Preprocessing:
 
         except:
             return "None"
+
+    def get_international_buiness_times(self, url):
+        try:
+            headersList = {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+            }
+
+            payload = ""
+
+            news_response = requests.request("GET", url, data=payload, headers=headersList)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('div', class_="article-paywall-contents")
+            paragraphs = content_div.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+            return text_content
+
+        except:
+            return "None"
