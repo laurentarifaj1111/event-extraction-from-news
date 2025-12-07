@@ -779,3 +779,22 @@ class Preprocessing:
 
         except:
             return "None"
+
+    def get_times_of_india(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('div', class_="_s30J clearfix")
+
+            all_text = content_div.text
+            return all_text
+
+        except:
+            try:
+                news_response = requests.get(url)
+                soup = BeautifulSoup(news_response.content, features="html.parser")
+                content_div = soup.select('article[class^="artData clr"]')
+                all_text = '\n'.join([div.get_text(separator=' ') for div in content_div])
+                return all_text
+            except:
+                return "None"
