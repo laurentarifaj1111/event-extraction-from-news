@@ -779,3 +779,85 @@ class Preprocessing:
 
         except:
             return "None"
+
+    def get_times_of_india(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('div', class_="_s30J clearfix")
+
+            all_text = content_div.text
+            return all_text
+
+        except:
+            try:
+                news_response = requests.get(url)
+                soup = BeautifulSoup(news_response.content, features="html.parser")
+                content_div = soup.select('article[class^="artData clr"]')
+                all_text = '\n'.join([div.get_text(separator=' ') for div in content_div])
+                return all_text
+            except:
+                return "None"
+
+def get_digital_content(self, url):
+        try:
+            news_response = requests.get(url)
+            soup = BeautifulSoup(news_response.content, features="html.parser")
+            content_div = soup.find('article', {'itemprop': 'articleBody'})
+            paragraphs = content_div.find_all('p')
+            text_content = ' '.join([paragraph.get_text(strip=True) for paragraph in paragraphs])
+
+            return text_content
+
+        except:
+            return "None"
+
+def append_word_to_file(self, word, filename="customoutput.log"):
+            with open(filename, 'a') as file:
+                file.write(str(word) + '\n')
+
+def list_files_in_directory(directory=data_directory):
+        files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+        return files
+
+def append_word_to_file(word, filename="customoutput.log"):
+        with open(filename, 'a') as file:
+            file.write(str(word) + '\n')
+
+def remove_files(directory_path):
+        files_to_remove = ['unwanted.csv', 'article.csv']
+        try:
+            for filename in files_to_remove:
+                file_path = os.path.join(directory_path, filename)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+def runner_main():
+    if not os.path.exists(data_directory):
+        os.makedirs(data_directory)
+
+    if f'{article_file}.csv' not in list_files_in_directory(data_directory):
+        CollectData().runner()
+    DumpSqlData().export_to_csv()
+    CollectData().append_word_to_file(f"export sql data to {data_directory}/{article_file}.csv")
+    if f'{str(previous_date)}.csv' not in list_files_in_directory(data_directory):
+        DumpSqlData().CurrentData()
+        CollectData().append_word_to_file(f"extracted Current Data to {data_directory}/{unwanted_file}.csv")
+    Preprocessing().remove_unwanted_row()
+    CollectData().append_word_to_file(f"removed Unwanted data and saved at {data_directory}/{unwanted_file}.csv")
+    Preprocessing().runner()
+    CollectData().append_word_to_file(f"Process the data and saved at {data_directory}/{previous_date}.csv")
+    remove_files(data_directory)
+    CollectData().append_word_to_file("Deleted extra files")
+    if f'{str(previous_date)}.csv' in list_files_in_directory(data_directory):
+        Preprocessing().after_prepprocessing()
+        CollectData().append_word_to_file("Done Basic After Preprocessing")
+    CollectData().append_word_to_file("Process is completed")
+    log_path = "customoutput.log"
+    if os.path.exists(log_path):
+        os.remove(log_path)
+
+if __name__ == '__main__':
+    runner_main()
