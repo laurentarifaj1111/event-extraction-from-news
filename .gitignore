@@ -1,5 +1,4 @@
 *.pyc
-/data
 /scripts
 .idea/*
 .DS_Store

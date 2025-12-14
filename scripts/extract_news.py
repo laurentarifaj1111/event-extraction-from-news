@@ -33,7 +33,7 @@ unwanted_file = "unwanted"
 today_date = datetime.now()
 previous_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
 
-api_list = ['2e9ca2e68438477cb89a2a15745e6a35']
+api_list = ['api_key']
 
 
 class CollectData:
