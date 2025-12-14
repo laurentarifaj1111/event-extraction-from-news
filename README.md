@@ -193,4 +193,4 @@ The notebooks automatically read the token from the environment and authenticate
 
 ## License
 
-This project is licensed under the **BSD 2-Clause License**. See the [LICENSE](./LICENSE) file for more details.
+This project is licensed under the **BSD 2-Clause License**. See the [LICENSE](./LICENSE.txt) file for more details.
