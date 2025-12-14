@@ -190,7 +190,7 @@ The notebooks automatically read the token from the environment and authenticate
 
 ---
 
-## License & Usage
 
-This repository is intended for **academic use only**.  
-Any reuse or redistribution of this work should properly reference the author and the **University of Prishtina – Hasan Prishtina**.
+## License
+
+This project is licensed under the **BSD 2-Clause License**. See the [LICENSE](./LICENSE) file for more details.
